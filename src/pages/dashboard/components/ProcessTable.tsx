@@ -104,7 +104,20 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                     </select>
                 </div>
                 {/* <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Status</option>{uniqueStatuses.map(s => <option key={s.id} value={s.nome}>{s.nome}</option>)}</select> */}
-                <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Tipos</option>{uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}</select>
+                <div className="relative cursor-pointer">
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span className="text-gray-400"><ChevronUpDownIcon /></span>
+                    </div>
+                    <select
+                        value={tipoFilter}
+                        onChange={e => setTipoFilter(e.target.value)}
+                        className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                    >
+                        <option className="text-gray-500" value="">Todos os Tipos</option>
+                        {uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}
+                    </select>
+                </div>
+                {/* <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Tipos</option>{uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}</select> */}
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left text-gray-500 divide-y divide-gray-200">

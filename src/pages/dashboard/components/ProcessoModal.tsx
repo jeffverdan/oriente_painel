@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Processo } from "@/types/processo";
 import { ObservacaoProcesso } from "@/types/observacao";
-import { ChevronDownIcon } from "@/lib/icons";
+import { ChevronDownIcon, ChevronUpDownIcon } from "@/lib/icons";
 import { useTiposAlteracao } from "@/hooks/useTiposAlteracao";
 import { useEmpresas } from "@/hooks/useEmpresas";
 import { useResponsaveis } from "@/hooks/useResponsaveis";
@@ -46,7 +46,6 @@ export default function ProcessoModal({
             })
         } else {
             setFormData({
-                tipo_processo: { id: 1, nome: 'Constituição' },
                 status: { id: 2, nome: 'Em Andamento' },
             })
         }
@@ -112,7 +111,7 @@ export default function ProcessoModal({
     const handleCnpjLookup = async () => {
         const cnpj = formData.empresa?.cnpj?.replace(/\D/g, '');
         console.log("Consultando CNPJ:", cnpj);
-        
+
         if (!cnpj || cnpj.length !== 14) {
             setCnpjError("CNPJ inválido. Deve conter 14 números.");
             return;
@@ -121,10 +120,10 @@ export default function ProcessoModal({
         setCnpjError(null);
         const empresa = empresas.find(emp => emp.cnpj.replace(/\D/g, '') === cnpj);
 
-        if(!empresa) {
+        if (!empresa) {
             try {
                 const consulta = await ConsultaCNPJ({ cnpj, days: 1 });
-                if(consulta?.status === 'OK') {
+                if (consulta?.status === 'OK') {
                     const data = consulta;
                     setFormData(prev => ({
                         ...prev,
@@ -168,12 +167,12 @@ export default function ProcessoModal({
                         }
                     }));
                 }
-    
+
                 setIsApiInfoOpen(true); // Abre o collapse com os dados novos
             } catch (error) {
                 setCnpjError("Erro ao consultar CNPJ. Verifique o número e tente novamente.");
                 console.error(error);
-            } 
+            }
         } else {
             console.log("CNPJ encontrado na base local:", cnpj);
             const atividades = await getAtividadesByEmpresa(empresa.id);
@@ -181,7 +180,7 @@ export default function ProcessoModal({
             setFormData(prev => ({
                 ...prev,
                 empresa: empresa || prev.empresa
-            }) );
+            }));
         }
         setCnpjLoading(false);
     };
@@ -220,16 +219,35 @@ export default function ProcessoModal({
                     <h3 className="text-xl font-semibold">{processo ? 'Editar Processo' : 'Adicionar Novo Processo'}</h3>
                     <button onClick={cleanStateAndClose} className="cursor-pointer text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto">
+                <form onSubmit={handleSubmit} className="p-6 pb-0 space-y-6 overflow-y-auto">
                     {/* 1ª Linha: Tipo do Processo e Tipos de Alteração */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                        {/* <div>
                             <label className="block text-sm font-medium text-gray-700">Tipo de Processo</label>
                             <select name="tipo_processo" value={formData.tipo_processo?.id} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                                 {tiposProcesso.map(tipo => (
                                     <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                                 ))}
                             </select>
+                        </div> */}
+                        <div>
+                            <label className="block text-sm mb-1 font-medium text-gray-700">Tipo de Processo</label>
+                            <div className="relative cursor-pointer">
+                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span className="text-gray-400"><ChevronUpDownIcon /></span>
+                                </div>
+                                <select
+                                    name="tipo_processo" 
+                                    value={formData.tipo_processo?.id}
+                                    onChange={handleChange}
+                                    className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                                >
+                                    <option className="text-gray-500" disabled value="">Selecione</option>
+                                    {tiposProcesso.map(tipo => (
+                                        <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         {formData.tipo_processo?.nome === 'Alteração' && (
@@ -338,36 +356,45 @@ export default function ProcessoModal({
                     {/* 3ª Linha: Status e Responsável */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Status
-                            </label>
-                            <select
-                                name="status"
-                                value={formData.status?.id || ''}
-                                onChange={handleChange}
-                                required
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="" disabled>Selecione o status</option>
-                                {statusList.map(status => (
-                                    <option key={status.id} value={status.id}>{status.nome}</option>
-                                ))}
-                            </select>
+                            <label className="block text-sm mb-1 font-medium text-gray-700">Status</label>
+                            <div className="relative cursor-pointer">
+                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span className="text-gray-400"><ChevronUpDownIcon /></span>
+                                </div>
+                                <select
+                                    name="status"
+                                    value={formData.status?.id || ''}
+                                    onChange={handleChange}
+                                    required
+                                    className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                                >
+                                    <option className="text-gray-500" disabled value="">Selecione o status</option>
+                                    {statusList.map(status => (
+                                        <option key={status.id} value={status.id}>{status.nome}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Responsável</label>
-                            <select
-                                name="responsavel"
-                                value={formData.responsavel?.id || ''}
-                                onChange={handleChange}
-                                required
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="" disabled>Selecione o responsável</option>
-                                {responsaveis.map(resp => (
-                                    <option key={resp.id} value={resp.id}>{resp.nome}</option>
-                                ))}
-                            </select>
+                            <label className="block text-sm mb-1 font-medium text-gray-700">Responsável</label>
+                            <div className="relative cursor-pointer">
+                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span className="text-gray-400"><ChevronUpDownIcon /></span>
+                                </div>
+                                <select
+                                    name="responsavel"
+                                    value={formData.responsavel?.id || ''}
+                                    onChange={handleChange}
+                                    required
+                                    className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+                                >
+                                    <option className="text-gray-500" disabled value="">Selecione o responsável</option>
+                                    {responsaveis.map(resp => (
+                                        <option key={resp.id} value={resp.id}>{resp.nome}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
 
