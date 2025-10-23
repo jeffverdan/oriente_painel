@@ -2,9 +2,9 @@
 
 import { DashboardIcon, LogoutIcon } from '@/lib/icons';
 import Image from 'next/image';
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import Logo from '@/images/Oriente_Simbolo.svg'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import Logo from '@/images/Oriente_Simbolo.svg';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/router';
 
@@ -47,9 +47,9 @@ export default function Sidebar() {
                 {/* <NavItem href="/dashboard/empresas" label="Empresas" icon={"🏢"} /> */}
             </nav>
             <div className="mt-auto">
-                <a href="/dashboard" onClick={handleSignOut} className="p-3 text-blue-300 hover:text-white rounded-lg" title="Deslogar">
+                <Link  href="/dashboard" onClick={handleSignOut} className="p-3 text-blue-300 hover:text-white rounded-lg" title="Deslogar">
                     <LogoutIcon />
-                </a>
+                </Link >
             </div>
         </aside>
     )

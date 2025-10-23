@@ -1,7 +1,7 @@
 import { ChevronUpDownIcon, EditIcon, SearchIcon } from "@/lib/icons";
 import { KeysStatus, Processo } from "@/types/processo";
 import { useMemo, useState } from "react";
-import { ProcessoModal } from "./ProcessoModal";
+import ProcessoModal from "./ProcessoModal";
 import { createProcesso, updateProcesso } from "@/lib/db/processos";
 import { useProcessos } from '@/hooks/useProcessos'
 import { createEmpresa } from "@/lib/db/empresas";
@@ -18,15 +18,15 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
     const { fetchProcessos } = useProcessos();
 
     const filteredProcessos = useMemo(() => {
-        return processos.filter(p =>
+        return processos?.filter(p =>
             p.empresa.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
             (statusFilter ? p.status.nome === statusFilter : true) &&
             (tipoFilter ? p.tipo_processo.nome === tipoFilter : true)
         );
     }, [processos, searchTerm, statusFilter, tipoFilter]);
 
-    const uniqueStatuses = useMemo(() => [...new Set(processos.map(p => p.status))], [processos]);
-    const uniqueTipos = useMemo(() => [...new Set(processos.map(p => p.tipo_processo))], [processos]);
+    const uniqueStatuses = useMemo(() => [...new Set(processos?.map(p => p.status))], [processos]);
+    const uniqueTipos = useMemo(() => [...new Set(processos?.map(p => p.tipo_processo))], [processos]);
 
     const handleOpenAddModal = () => {
         setProcessoEmEdicao(null);
@@ -100,11 +100,11 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                         className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                     >
                         <option className="text-gray-500" value="">Todos os Status</option>
-                        {uniqueStatuses.map(s => <option key={s.id} value={s.nome}>{s.nome} </option>)}
+                        {uniqueStatuses?.map(s => <option key={s.id} value={s.nome}>{s.nome} </option>)}
                     </select>
                 </div>
                 {/* <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Status</option>{uniqueStatuses.map(s => <option key={s.id} value={s.nome}>{s.nome}</option>)}</select> */}
-                <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Tipos</option>{uniqueTipos.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}</select>
+                <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Tipos</option>{uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}</select>
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left text-gray-500 divide-y divide-gray-200">
@@ -120,7 +120,7 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredProcessos.map(proc => (
+                        {filteredProcessos?.map(proc => (
                             <tr key={proc.id} className="bg-white border-b border-gray-200 hover:bg-gray-100">
                                 <td className="px-6 py-4 font-medium text-gray-900 hidden md:table-cell">{proc.id}</td>
                                 <td className="px-6 py-4">{proc.empresa.nome}</td>

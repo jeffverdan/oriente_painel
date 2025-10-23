@@ -2,10 +2,9 @@
 
 import HeadSeo from '@/componentes/HeadSeo/HeadSeo';
 import { useEffect, useMemo, useState } from 'react'
-import { Bar, Pie } from 'react-chartjs-2'
 import { useProcessos } from '../../hooks/useProcessos'
 import Sidebar from './components/Sidebar'
-import { SummaryCard } from './components/SummaryCard'
+import SummaryCard from './components/SummaryCard'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js'
 import { AlertTriangleIcon, CheckIcon, ClockIcon, ProcessosIcon } from '@/lib/icons'
 import ProcessTable from './components/ProcessTable'

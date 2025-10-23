@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 import { Processo, StatusProcesso, TipoAlteracao, TipoProcesso } from '@/types/processo'
 import { PostgrestError } from '@supabase/supabase-js';
 import { Empresa } from '@/types/empresa';
 import { Responsavel } from '@/types/responsavel';
-import { processosMock } from '@/mocks/processosMock';
 import { getObservacoesByProcesso } from '@/lib/db/observacoes';
 import { getProcessos } from '@/lib/db/processos';
 import { getEmpresaById } from '@/lib/db/empresas';

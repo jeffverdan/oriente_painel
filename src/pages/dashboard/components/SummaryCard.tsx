@@ -10,7 +10,7 @@ interface Props {
 }
 
 
-export function SummaryCard({ title, value, color = 'gray', icon, hint }: Props) {
+export default function SummaryCard({ title, value, color = 'gray', icon, hint }: Props) {
     const colorClasses = {
         indigo: { text: 'text-indigo-700', bg: 'bg-indigo-100' },
         blue: { text: 'text-sky-800', bg: 'bg-sky-100' },

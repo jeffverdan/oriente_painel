@@ -11,7 +11,7 @@ import { ConsultaCNPJ } from "@/apis/ConsultaCNPJ";
 import { Empresa } from "@/types/empresa";
 import { getAtividadesByEmpresa } from "@/lib/db/atividades";
 
-export const ProcessoModal = ({
+export default function ProcessoModal({
     isOpen,
     onClose,
     onSave,
@@ -21,7 +21,7 @@ export const ProcessoModal = ({
     onClose: () => void
     onSave: (data: Partial<Processo>) => void
     processo: Processo | null
-}) => {
+}) {
     const [formData, setFormData] = useState<Partial<Processo>>({})
     const [newNote, setNewNote] = useState('');
     const [isAutocompleteOpen, setAutocompleteOpen] = useState(false);
