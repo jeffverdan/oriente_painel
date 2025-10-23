@@ -10,6 +10,9 @@ import { useStatusProcesso } from "@/hooks/useStatusProcesso";
 import { ConsultaCNPJ } from "@/apis/ConsultaCNPJ";
 import { Empresa } from "@/types/empresa";
 import { getAtividadesByEmpresa } from "@/lib/db/atividades";
+import SelectItem from "@/componentes/SelectItem/SelectItem";
+import ButtonCustom from "@/componentes/Button/Button";
+import EmpresaInfoAccordion from "./EmpresaInfoAccordion";
 
 export default function ProcessoModal({
     isOpen,
@@ -210,7 +213,15 @@ export default function ProcessoModal({
         });
     };
 
-    console.log("FormData: ", formData);
+    // FUNÇÃO QUE DESABILITA O BOTÃO ATÉ TODOS OS CAMPOS OBRIGATÓRIOS ESTAREM PREENCHIDOS
+    const disableSubmit = () => {
+        if (!formData.tipo_processo) return true;
+        if (!formData.empresa?.nome) return true;
+        if (formData.tipo_processo?.nome !== 'Constituição' && !formData.empresa?.cnpj) return true;
+        if (!formData.status) return true;
+        if (!formData.responsavel) return true;
+        return false;
+    };
 
     return (
         <div className="fixed inset-0 bg-black/50 bg-opacity-50 z-50 flex justify-center items-center p-4">
@@ -221,34 +232,24 @@ export default function ProcessoModal({
                 </div>
                 <form onSubmit={handleSubmit} className="p-6 pb-0 space-y-6 overflow-y-auto">
                     {/* 1ª Linha: Tipo do Processo e Tipos de Alteração */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* <div>
-                            <label className="block text-sm font-medium text-gray-700">Tipo de Processo</label>
-                            <select name="tipo_processo" value={formData.tipo_processo?.id} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                {tiposProcesso.map(tipo => (
-                                    <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
-                                ))}
-                            </select>
-                        </div> */}
-                        <div>
-                            <label className="block text-sm mb-1 font-medium text-gray-700">Tipo de Processo</label>
-                            <div className="relative cursor-pointer">
-                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span className="text-gray-400"><ChevronUpDownIcon /></span>
-                                </div>
-                                <select
-                                    name="tipo_processo" 
-                                    value={formData.tipo_processo?.id}
-                                    onChange={handleChange}
-                                    className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option className="text-gray-500" disabled value="">Selecione</option>
-                                    {tiposProcesso.map(tipo => (
-                                        <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                        <SelectItem
+                            label="Tipo de Processo"
+                            value={formData.tipo_processo?.id?.toString() || ''}
+                            onChange={(value) => {
+                                const selectedTipo = tiposProcesso.find(tipo => tipo.id === Number(value));
+                                setFormData(prev => ({ ...prev, tipo_processo: selectedTipo, tipos_alteracao: [] }));
+                            }}
+                            options={tiposProcesso.map(tipo => ({
+                                id: tipo.id,
+                                label: tipo.nome,
+                                value: tipo.id.toString(),
+                            }))}
+                            required
+                            placeholder="Selecione"
+                            fullWidth
+                            size="medium"
+                        />
 
                         {formData.tipo_processo?.nome === 'Alteração' && (
                             <div ref={autocompleteRef} className="relative">
@@ -339,7 +340,7 @@ export default function ProcessoModal({
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">CNPJ</label>
                                 <div className="mt-1 flex gap-2">
-                                    <input type="text" name="empresa.cnpj" value={formData.empresa?.cnpj} onChange={handleChange} className="flex-grow border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="00.000.000/0000-00" />
+                                    <input type="text" name="empresa.cnpj" required value={formData.empresa?.cnpj} onChange={handleChange} className="flex-grow border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="00.000.000/0000-00" />
                                     <button type="button" onClick={handleCnpjLookup} disabled={cnpjLoading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 flex items-center justify-center w-32">
                                         {cnpjLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : 'Consultar'}
                                     </button>
@@ -355,47 +356,40 @@ export default function ProcessoModal({
 
                     {/* 3ª Linha: Status e Responsável */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm mb-1 font-medium text-gray-700">Status</label>
-                            <div className="relative cursor-pointer">
-                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span className="text-gray-400"><ChevronUpDownIcon /></span>
-                                </div>
-                                <select
-                                    name="status"
-                                    value={formData.status?.id || ''}
-                                    onChange={handleChange}
-                                    required
-                                    className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option className="text-gray-500" disabled value="">Selecione o status</option>
-                                    {statusList.map(status => (
-                                        <option key={status.id} value={status.id}>{status.nome}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm mb-1 font-medium text-gray-700">Responsável</label>
-                            <div className="relative cursor-pointer">
-                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span className="text-gray-400"><ChevronUpDownIcon /></span>
-                                </div>
-                                <select
-                                    name="responsavel"
-                                    value={formData.responsavel?.id || ''}
-                                    onChange={handleChange}
-                                    required
-                                    className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option className="text-gray-500" disabled value="">Selecione o responsável</option>
-                                    {responsaveis.map(resp => (
-                                        <option key={resp.id} value={resp.id}>{resp.nome}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
+                        <SelectItem
+                            label="Status"
+                            value={formData.status?.id?.toString() || ''}
+                            onChange={(value) => {
+                                const selectedStatus = statusList.find(status => status.id === Number(value));
+                                setFormData(prev => ({ ...prev, status: selectedStatus }));
+                            }}
+                            options={statusList.map(status => ({
+                                id: status.id,
+                                label: status.nome,
+                                value: status.id.toString(),
+                            }))}                            
+                            required
+                            placeholder="Selecione"
+                            fullWidth
+                            size="medium"
+                        />
+                        <SelectItem
+                            label="Responsável"
+                            value={formData.responsavel?.id?.toString() || ''}
+                            onChange={(value) => {
+                                const selectedResponsavel = responsaveis.find(resp => resp.id === Number(value));
+                                setFormData(prev => ({ ...prev, responsavel: selectedResponsavel }));
+                            }}
+                            options={responsaveis.map(resp => ({
+                                id: resp.id,
+                                label: resp.nome,
+                                value: resp.id.toString(),
+                            }))}                            
+                            required
+                            placeholder="Selecione"
+                            fullWidth
+                            size="medium"
+                        />
                     </div>
 
                     {/* 4ª Linha: Notas */}
@@ -425,153 +419,20 @@ export default function ProcessoModal({
                     {/* Collapse: Informações da API */}
                     {formData.tipo_processo?.nome !== 'Constituição' && (
                         <div>
-                            <button type="button" onClick={() => setIsApiInfoOpen(!isApiInfoOpen)} className="w-full flex justify-between items-center p-3 bg-gray-50 border rounded-md hover:bg-gray-100">
-                                <span className="font-medium text-gray-700">Informações da Empresa (Receita Federal)</span>
-                                <ChevronDownIcon />
-                            </button>
-                            <div className={`overflow-hidden transition-all duration-500 ${isApiInfoOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                                <div className="p-4 border border-t-0 rounded-b-md space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700">Situação</label>
-                                            <input
-                                                type="text"
-                                                name="situacao"
-                                                value={formData.empresa?.situacao}
-                                                className="mt-1 bg-gray-100 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                                                readOnly
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700">Porte</label>
-                                            <input
-                                                type="text"
-                                                name="porte"
-                                                value={formData.empresa?.porte}
-                                                className="mt-1 bg-gray-100 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                                                readOnly
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700">Natureza Jurídica</label>
-                                            <input
-                                                type="text"
-                                                name="natureza_juridica"
-                                                value={formData.empresa?.natureza_juridica}
-                                                className="mt-1 bg-gray-100 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                                                readOnly
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Atividade Principal</label>
-                                            <div className="p-3 border rounded-md bg-slate-50 text-sm h-full">
-                                                {formData.empresa?.atividades?.filter(f => f.tipo === 'principal').map(a =>
-                                                    <div key={a.id}>
-                                                        <p className="font-semibold">
-                                                            {a.cnae_codigo}
-                                                        </p>
-                                                        <p className="text-gray-600">
-                                                            {a.descricao}
-                                                        </p>
-                                                    </div>) || <p className="text-gray-400">N/A</p>
-                                                }
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Atividades Secundárias</label>
-                                            <div className="p-3 border rounded-md bg-slate-50 text-sm h-full max-h-32 overflow-y-auto">
-                                                {formData.empresa?.atividades?.filter(f => f.tipo === 'secundaria').map(a =>
-                                                    <div key={a.id} className="mb-2">
-                                                        <p className="font-semibold">
-                                                            {a.cnae_codigo}
-                                                        </p>
-                                                        <p className="text-gray-600">
-                                                            {a.descricao}
-                                                        </p>
-                                                    </div>) || <p className="text-gray-400">N/A</p>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <fieldset className="border p-4 rounded-md">
-                                        <legend className="px-2 text-sm font-medium">Endereço</legend>
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                            <div className="md:col-span-3">
-                                                <label className="block text-xs text-gray-600">Logradouro</label>
-                                                <input type="text" name="logradouro" value={formData.empresa?.logradouro} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs text-gray-600">Número</label>
-                                                <input type="text" name="numero" value={formData.empresa?.numero} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-xs text-gray-600">Complemento</label>
-                                                <input type="text" name="complemento" value={formData.empresa?.complemento} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-xs text-gray-600">Bairro</label>
-                                                <input type="text" name="bairro" value={formData.empresa?.bairro} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-xs text-gray-600">Município</label>
-                                                <input type="text" name="municipio" value={formData.empresa?.municipio} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs text-gray-600">UF</label>
-                                                <input type="text" name="uf" value={formData.empresa?.uf} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs text-gray-600">CEP</label>
-                                                <input type="text" name="cep" value={formData.empresa?.cep} className="mt-1 bg-gray-100 w-full border-gray-300 rounded-md p-2 text-sm" readOnly />
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <fieldset className="border p-4 rounded-md">
-                                            <legend className="px-2 text-sm font-medium">Simples</legend>
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-2">
-                                                    <input type="checkbox" name="simples_optante" checked={!!formData.empresa?.simples_optante} onChange={handleChange} className="h-4 w-4 bg-gray-100" disabled />
-                                                    <label>Optante</label>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs text-gray-600">Data Opção</label>
-                                                    <input type="text" name="simples_data_opcao" value={formData.empresa?.simples_data_opcao || ''} className="mt-1 bg-gray-100 w-full rounded-md p-2 text-sm" readOnly />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs text-gray-600">Data Exclusão</label>
-                                                    <input type="text" name="simples_data_exclusao" value={formData.empresa?.simples_data_exclusao || ''} className="mt-1 bg-gray-100 w-full rounded-md p-2 text-sm" readOnly />
-                                                </div>
-                                            </div>
-                                        </fieldset>
-                                        <fieldset className="border p-4 rounded-md">
-                                            <legend className="px-2 text-sm font-medium">SIMEI</legend>
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-2">
-                                                    <input type="checkbox" name="simei_optante" checked={!!formData.empresa?.simei_optante} onChange={handleChange} className="h-4 w-4 bg-gray-100" disabled />
-                                                    <label>Optante</label>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs text-gray-600">Data Opção</label>
-                                                    <input type="text" name="simei_data_opcao" value={formData.empresa?.simei_data_opcao || ''} className="mt-1 bg-gray-100 w-full rounded-md p-2 text-sm" readOnly />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-xs text-gray-600">Data Exclusão</label>
-                                                    <input type="text" name="simei_data_exclusao" value={formData.empresa?.simei_data_exclusao || ''} className="mt-1 bg-gray-100 w-full rounded-md p-2 text-sm" readOnly />
-                                                </div>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
+                            <EmpresaInfoAccordion
+                                isApiInfoOpen={isApiInfoOpen}
+                                setIsApiInfoOpen={setIsApiInfoOpen}
+                                formData={formData}
+                                handleChange={handleChange}
+                            />
                         </div>
                     )}
 
                     <div className="flex justify-end gap-4 pt-4 border-t mt-6 sticky bottom-0 bg-white py-4 z-10">
-                        <button type="button" onClick={cleanStateAndClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button>
-                        <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Salvar</button>
+                        <ButtonCustom type="button" onClick={cleanStateAndClose} variantType="secondary" visualType="outlined" label="Cancelar" />
+                        {/* <button type="button" onClick={cleanStateAndClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button> */}
+                        <ButtonCustom type="submit" disabled={disableSubmit()} variantType="primary" label="Salvar" />
+                        {/* <button type="submit" disabled={disableSubmit()} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Salvar</button> */}
                     </div>
                 </form>
             </div>

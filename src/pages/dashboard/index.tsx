@@ -18,7 +18,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 
 export default function DashboardPage() {
-    const { processos, loading  } = useProcessos();
+    const { processos, loading, fetchProcessos  } = useProcessos();
     console.log(processos);
     const [user, setUser] = useState<User | null>(null)
     const router = useRouter()
@@ -55,7 +55,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8">
-                    <ProcessTable processos={processos} />
+                    <ProcessTable processos={processos} refresh={fetchProcessos} />
                     <Charts processos={processos} />
                 </div>
             </main>

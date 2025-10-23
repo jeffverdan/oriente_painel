@@ -1,15 +1,18 @@
-import { ChevronUpDownIcon, EditIcon, SearchIcon } from "@/lib/icons";
+import { EditIcon, SearchIcon } from "@/lib/icons";
 import { KeysStatus, Processo } from "@/types/processo";
 import { useMemo, useState } from "react";
 import ProcessoModal from "./ProcessoModal";
 import { createProcesso, updateProcesso } from "@/lib/db/processos";
 import { useProcessos } from '@/hooks/useProcessos'
 import { createEmpresa } from "@/lib/db/empresas";
+import SelectItem from "@/componentes/SelectItem/SelectItem";
+import { toastEmitter } from "@/lib/functions";
+import ChipCustom, { ChipColor } from "@/componentes/Chip/Chip";
 
-const statusColors: Record<KeysStatus, string> = { 'Concluído': 'bg-green-100 text-green-800', 'Em Andamento': 'bg-sky-100 text-sky-800', 'Aguardando Cliente': 'bg-yellow-100 text-yellow-800', 'Cancelado': 'bg-red-100 text-red-800' };
+const statusColors: Record<KeysStatus, ChipColor> = { 'Concluído': 'green', 'Em Andamento': 'sky', 'Aguardando Cliente': 'yellow', 'Cancelado': 'red' };
 // const statusColors: Record<KeysStatus, string> = { 'Concluído': 'bg-amber-100 text-amber-800', 'Em Andamento': 'bg-sky-100 text-sky-800', 'Aguardando Cliente': 'bg-gray-100 text-gray-800', 'Cancelado': 'bg-red-100 text-red-800' };
 
-export default function ProcessTable({ processos }: { processos: Processo[] }) {
+export default function ProcessTable({ processos, refresh }: { processos: Processo[], refresh: () => Promise<void> }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [processoEmEdicao, setProcessoEmEdicao] = useState<Processo | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -26,9 +29,7 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
     }, [processos, searchTerm, statusFilter, tipoFilter]);
 
     const uniqueStatuses = useMemo(() => [...new Set(processos?.map(p => p.status) || [])], [processos]);
-    const uniqueTipos = useMemo(() => [...new Set(processos?.map(p => p.tipo_processo) || [])], [processos]);
-    console.log("Unique: ", processos);
-    
+    const uniqueTipos = useMemo(() => [...new Set(processos?.map(p => p.tipo_processo) || [])], [processos]);    
 
     const handleOpenAddModal = () => {
         setProcessoEmEdicao(null);
@@ -44,7 +45,7 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
         try {
             if (processoData.id) {
                 await updateProcesso(processoData)
-                alert('Processo atualizado com sucesso!')
+                toastEmitter('Processo atualizado com sucesso!', 'success')                
             } else {
                 const empresa_id = processoData.empresa?.id;
                 if (!empresa_id) {
@@ -53,11 +54,11 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                 }
 
                 await createProcesso(processoData);
-
-                alert('Processo criado com sucesso!')
+                toastEmitter('Processo criado com sucesso!', 'success');
             }            
-            setIsModalOpen(false)
-            window.location.reload();
+            setIsModalOpen(false);
+            await refresh();
+            // window.location.reload();
         } catch (err) {
             console.error(err)
             alert('Erro ao salvar processo: ' + err)
@@ -91,39 +92,27 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                         placeholder="Buscar por empresa..."
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                </div>
-                <div className="relative cursor-pointer">
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-gray-400"><ChevronUpDownIcon /></span>
-                    </div>
-                    <select
-                        value={statusFilter}
-                        onChange={e => setStatusFilter(e.target.value)}
-                        className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                    >
-                        <option className="text-gray-500" value="">Todos os Status</option>
-                        {uniqueStatuses?.map(s => <option key={s.id} value={s?.nome}>{s?.nome} </option>)}
-                    </select>
-                </div>
-                {/* <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Status</option>{uniqueStatuses.map(s => <option key={s.id} value={s.nome}>{s.nome}</option>)}</select> */}
-                <div className="relative cursor-pointer">
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-gray-400"><ChevronUpDownIcon /></span>
-                    </div>
-                    <select
-                        value={tipoFilter}
-                        onChange={e => setTipoFilter(e.target.value)}
-                        className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                    >
-                        <option className="text-gray-500" value="">Todos os Tipos</option>
-                        {uniqueTipos?.map(t => <option key={t.id} value={t?.nome}>{t?.nome}</option>)}
-                    </select>
-                </div>
-                {/* <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Tipos</option>{uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}</select> */}
+                </div>                
+                <SelectItem
+                    label="Status"
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    placeholder="Todos os Status"
+                    phAtivo
+                    options={uniqueStatuses.map(s => ({ id: s.id, label: s.nome, value: s.nome }))}
+                />
+                <SelectItem
+                    label="Tipo de Processo"
+                    value={tipoFilter}
+                    onChange={setTipoFilter}
+                    placeholder="Todos os Tipos"
+                    phAtivo
+                    options={uniqueTipos.map(t => ({ id: t.id, label: t.nome, value: t.nome }))}
+                />
             </div>
             <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left text-gray-500 divide-y divide-gray-200">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                <table className="w-full text-sm text-left text-gray-500 divide-y divide-gray-200" >
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50" style={{ borderColor: '#d4b477'}}>
                         <tr>
                             <th scope="col" className="px-6 py-3 hidden md:table-cell">ID</th>
                             <th scope="col" className="px-6 py-3">Empresa</th>
@@ -142,7 +131,7 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                                 <td className="px-6 py-4">{proc.tipo_processo.nome}</td>
                                 <td className="px-6 py-4">{proc.responsavel?.nome}</td>
                                 <td className="px-6 py-4">{new Date(proc.data_inicio + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
-                                <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[proc.status.nome]}`}>{proc.status.nome}</span></td>
+                                <td className="px-6 py-4"><ChipCustom label={proc.status.nome} colorType={statusColors[proc.status.nome]} /></td>
                                 <td className="px-6 py-4">
                                     <button onClick={() => handleOpenEditModal(proc)} className="text-indigo-600 cursor-pointer  hover:text-indigo-900"><EditIcon /></button>
                                 </td>
