@@ -36,12 +36,14 @@ export default function ProcessTable({ processos, refresh }: { processos: Proces
         setIsModalOpen(true);
     };
 
-    const handleOpenEditModal = (processo: Processo) => {
+    const handleOpenEditModal = async (processo: Processo) => {        
         setProcessoEmEdicao(processo);
         setIsModalOpen(true);
     };
 
     const handleSaveProcess = async (processoData: Partial<Processo>) => {
+        console.log("Salvando processo: ", processoData);
+        
         try {
             if (processoData.id) {
                 await updateProcesso(processoData)

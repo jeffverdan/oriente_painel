@@ -5,6 +5,7 @@ import { Responsavel } from './responsavel'
 
 export interface TipoAlteracao {
     id: number
+    id_tabela?: number
     categoria: string
     descricao: string
 }

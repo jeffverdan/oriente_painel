@@ -195,23 +195,20 @@ export default function ProcessoModal({
     }, {} as Record<string, string[]>);
 
     const handleAlteracaoToggle = (alteracao: string) => {
-        setFormData(prev => {
-            console.log("Toggling alteracao: ", alteracao);
-
-            const currentAlteracoes = prev.tipos_alteracao || [];
-            const isAlreadySelected = currentAlteracoes.some(a => a.descricao === alteracao);
-            let newAlteracoes;
-            if (isAlreadySelected) {
-                newAlteracoes = currentAlteracoes.filter(a => a.descricao !== alteracao);
-            } else {
-                const alteracaoToAdd = tiposAlteracao.find(a => a.descricao === alteracao);
-                if (!alteracaoToAdd) return prev; // Segurança extra
-                newAlteracoes = [...currentAlteracoes, alteracaoToAdd];
-            }
-
-            return { ...prev, tipos_alteracao: newAlteracoes };
-        });
+        console.log("Toggling alteracao: ", alteracao);
+        const alreadySelected = formData.tipos_alteracao?.some(a => a.descricao === alteracao);
+        let newAlteracoes;
+        if (alreadySelected) {
+            newAlteracoes = formData.tipos_alteracao?.filter(a => a.descricao !== alteracao) || [];
+        } else {
+            const alteracaoObj = tiposAlteracao.find(a => a.descricao === alteracao);
+            newAlteracoes = [...(formData.tipos_alteracao || []), alteracaoObj!];
+        }
+        console.log("New alteracoes: ", newAlteracoes);
+        setFormData(prev => ({ ...prev, tipos_alteracao: newAlteracoes }) );
     };
+    console.log("formData.tipos_alteracao: ", formData);
+    
 
     // FUNÇÃO QUE DESABILITA O BOTÃO ATÉ TODOS OS CAMPOS OBRIGATÓRIOS ESTAREM PREENCHIDOS
     const disableSubmit = () => {

@@ -1,9 +1,30 @@
 import { supabase } from '@/lib/supabaseClient'
 import { ObservacaoProcesso } from '@/types/observacao'
-import { Processo } from '@/types/processo'
+import { Processo, TipoAlteracao } from '@/types/processo'
 import { registrarHistorico } from './historico'
 import { createObservacao } from './observacoes';
+import { syncTiposAlteracao } from './tipos_alteracao';
 const usuario = (await supabase.auth.getUser()).data.user;
+
+type RawProcesso = {
+    id: number;
+    data_inicio: string | null;
+    data_envio_junta: string | null;
+    data_conclusao: string | null;
+    empresa: number | null;
+    responsavel: { id: number; nome: string } | null;
+    tipo_processo: { id: number; nome: string } | null;
+    status: { id: number; nome: string } | null;
+    tipos_alteracao: {
+      id_tipo_alteracao: number;
+      tipo_alteracao: {
+        id: number;
+        categoria: string;
+        descricao: string;
+      } | null;
+    }[];
+  };
+  
 
 export async function getProcessos() {
     const { data, error } = await supabase
@@ -18,18 +39,28 @@ export async function getProcessos() {
         tipo_processo:tipo_processo_id (id, nome),
         status:status_id (id, nome),
         tipos_alteracao:processos_tipos_alteracao (
-          tipo_alteracao:tipo_alteracao_id (id, descricao, categoria)
+            id_tipo_alteracao: id,
+            tipo_alteracao:tipo_alteracao_id (id, categoria, descricao)
         )
       `)
         .is('deleted_at', null)
         .order('id', { ascending: false })
 
     if (error) throw new Error(error.message)
+        console.log("Tipos Altercao: ", data.map(p => p.tipos_alteracao));
 
+    // força o tipo aqui
+    const rawData = (data || []) as unknown as RawProcesso[];
+        
     // Normaliza o array de tipos de alteração
-    const processos = (data || []).map(p => ({
+    const processos = (rawData || []).map((p) => ({
         ...p,
-        tipos_alteracao: p.tipos_alteracao?.map(t => t.tipo_alteracao) || [],
+        tipos_alteracao: p.tipos_alteracao.map((ta) => ({
+            id: ta.tipo_alteracao?.id,
+            id_tabela: ta.id_tipo_alteracao,
+            categoria: ta.tipo_alteracao?.categoria,
+            descricao: ta.tipo_alteracao?.descricao,
+        })) as TipoAlteracao[],
         observacoes: [] as ObservacaoProcesso[],
     }))
 
@@ -56,13 +87,8 @@ export async function createProcesso(data: Partial<Processo>) {
 
     if (error) throw new Error(error.message)
     if (newProcesso) {
-        if (data.tipos_alteracao && data.tipos_alteracao.filter(ta => !ta.id).length > 0) {
-            await supabase.from('processos_tipos_alteracao').insert(
-                data.tipos_alteracao.filter(ta => !ta.id).map(ta => ({
-                    processo_id: newProcesso.id,
-                    tipo_alteracao_id: ta.id,
-                })))
-        }
+        await syncTiposAlteracao(data.tipos_alteracao || [], newProcesso.id);
+        
         if (data.observacoes && data.observacoes.length > 0) {
             data.observacoes.filter(obs => !obs.id).forEach(async obs =>
                 await createObservacao(
@@ -109,14 +135,10 @@ export async function updateProcesso(data: Partial<Processo>) {
         .eq('id', data.id)
 
     if (error) throw new Error(error.message)
+    console.log("data.tipos_alteracao: ", data.tipos_alteracao);    
 
-    if (data.tipos_alteracao && data.tipos_alteracao.filter(ta => !ta.id).length > 0) {
-        await supabase.from('processos_tipos_alteracao').insert(
-            data.tipos_alteracao.filter(ta => !ta.id).map(ta => ({
-                processo_id: data.id,
-                tipo_alteracao_id: ta.id,
-            })))
-    }
+    await syncTiposAlteracao(data.tipos_alteracao || [], data.id);
+    
     if (!!data.id && data.observacoes && data.observacoes.length > 0) {
         data.observacoes.filter(obs => !obs.id).forEach(async obs =>
             await createObservacao(
