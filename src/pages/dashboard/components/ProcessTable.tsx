@@ -25,8 +25,10 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
         );
     }, [processos, searchTerm, statusFilter, tipoFilter]);
 
-    const uniqueStatuses = useMemo(() => [...new Set(processos?.map(p => p.status))], [processos]);
-    const uniqueTipos = useMemo(() => [...new Set(processos?.map(p => p.tipo_processo))], [processos]);
+    const uniqueStatuses = useMemo(() => [...new Set(processos?.map(p => p.status) || [])], [processos]);
+    const uniqueTipos = useMemo(() => [...new Set(processos?.map(p => p.tipo_processo) || [])], [processos]);
+    console.log("Unique: ", processos);
+    
 
     const handleOpenAddModal = () => {
         setProcessoEmEdicao(null);
@@ -53,9 +55,9 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                 await createProcesso(processoData);
 
                 alert('Processo criado com sucesso!')
-            }
-            fetchProcessos();
+            }            
             setIsModalOpen(false)
+            window.location.reload();
         } catch (err) {
             console.error(err)
             alert('Erro ao salvar processo: ' + err)
@@ -100,7 +102,7 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                         className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                     >
                         <option className="text-gray-500" value="">Todos os Status</option>
-                        {uniqueStatuses?.map(s => <option key={s.id} value={s.nome}>{s.nome} </option>)}
+                        {uniqueStatuses?.map(s => <option key={s.id} value={s?.nome}>{s?.nome} </option>)}
                     </select>
                 </div>
                 {/* <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Status</option>{uniqueStatuses.map(s => <option key={s.id} value={s.nome}>{s.nome}</option>)}</select> */}
@@ -114,7 +116,7 @@ export default function ProcessTable({ processos }: { processos: Processo[] }) {
                         className="select w-full cursor-pointer hover:bg-gray-50 hover:text-gray-700 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                     >
                         <option className="text-gray-500" value="">Todos os Tipos</option>
-                        {uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}
+                        {uniqueTipos?.map(t => <option key={t.id} value={t?.nome}>{t?.nome}</option>)}
                     </select>
                 </div>
                 {/* <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)} className="w-full cursor-pointer px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option value="">Todos os Tipos</option>{uniqueTipos?.map(t => <option key={t.id} value={t.nome}>{t.nome}</option>)}</select> */}
