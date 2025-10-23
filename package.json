@@ -1,0 +1,43 @@
+{
+  "name": "oriente-painel",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "https://receitaws.com.br",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
+    "@mui/styled-engine-sc": "^7.3.3",
+    "@supabase/supabase-js": "^2.76.1",
+    "axios": "^1.12.2",
+    "next": "15.5.6",
+    "next-themes": "^0.4.6",
+    "postcss": "^8.5.6",
+    "react": "19.1.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "19.1.0",
+    "styled-components": "^6.1.19",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-react-aria-components": "^2.0.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.15",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "daisyui": "^5.3.8",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.6",
+    "tailwindcss": "^4.1.15",
+    "typescript": "^5"
+  }
+}
