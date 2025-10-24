@@ -20,11 +20,12 @@ export default function App({ Component, pageProps }: AppProps) {
     // opcional: escuta alterações de auth e redireciona
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session && router.pathname !== '/login' && router.pathname !== '/forgot') {
-        router.push('/login')
+        // router.push('/')
       }
       if (session && router.pathname === '/login') {
-        router.push('/')
+        // router.push('/')
       }
+      // router.push('/home')
     })
     return () => listener?.subscription.unsubscribe()
   }, [router])

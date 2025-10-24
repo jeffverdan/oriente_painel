@@ -12,10 +12,10 @@ export default function Dashboard() {
   useEffect(() => {
     async function check() {
       const { data } = await supabase.auth.getSession()
-      if (!data.session) return router.push('/login')      
-      setUser(data.session.user);
-      router.push('/dashboard')
-    
+      // if (!data.session) return router.push('/login')      
+      // setUser(data.session.user);
+      // router.push('/dashboard')    
+      router.push('/home')
     }
     check()
   }, [router])
