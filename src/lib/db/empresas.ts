@@ -7,7 +7,7 @@ import { formatCNPJ } from '../formatters';
 /**
  * Busca todas as empresas (com atividades relacionadas).
  */
-export async function getEmpresaById(id: number) {
+export async function getEmpresaById(id: number | null) {
     if(!id) return undefined;
     
     const { data, error } = await supabase

@@ -498,26 +498,6 @@ const WhatsAppButton = () => {
 export default function App() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Em um app Next.js real, o <Head> gerenciaria o <head> do HTML.
-        Esta é a simulação de como seria.
-      */}
-      {/* O import 'next/head' (na linha 4) foi removido e o componente <Head> abaixo 
-        foi comentado para corrigir o erro de compilação 'Could not resolve "next/head"' 
-        neste ambiente de preview.
-      */}
-      {/*
-      <Head>
-        <title>Oriente Legalização - Segurança e Agilidade para sua Empresa</title>
-        <meta
-          name="description"
-          content="Legalize sua empresa com segurança. Oferecemos serviços de constituição, alteração, regularização e baixa de empresas 100% online."
-        />
-        <link rel="icon" href="/favicon.ico" />
-        {/* As fontes Poppins e Inter seriam idealmente carregadas 
-          no _app.js ou layout.js com next/font
-        */}
-      {/* </Head> */}
-
       <Header />
 
       <main className="flex-grow">

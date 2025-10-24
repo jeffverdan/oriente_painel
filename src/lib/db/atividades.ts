@@ -5,7 +5,8 @@ import { registrarHistorico } from './historico'
 /**
  * Busca todas as atividades de uma empresa.
  */
-export async function getAtividadesByEmpresa(empresaId: number) {
+export async function getAtividadesByEmpresa(empresaId: number | null) {
+  if(!empresaId) return []
   const { data, error } = await supabase
     .from('atividades')
     .select('*')
