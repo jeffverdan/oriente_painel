@@ -22,9 +22,11 @@ import {
   Instagram,
   Linkedin,
   MessagesSquare, // Ícone para o WhatsApp FAB
-  Send
+  Send,
+  UserPlus
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 // --- COMPONENTES REUTILIZÁVEIS ---
 
@@ -52,7 +54,7 @@ const Header = () => {
             alt="Oriente Legalização"
             width={160}
             height={40}
-            />
+          />
         </a>
 
         {/* Menu Desktop */}
@@ -82,9 +84,8 @@ const Header = () => {
 
       {/* Dropdown do Menu Mobile */}
       <div
-        className={`md:hidden absolute top-full left-0 w-full bg-[#0D2A55] shadow-lg transition-all duration-300 ease-in-out overflow-hidden ${
-          isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`md:hidden absolute top-full left-0 w-full bg-[#0D2A55] shadow-lg transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
       >
         <div className="flex flex-col px-4 py-2">
           {navItems.map((item) => (
@@ -143,7 +144,7 @@ const Benefits = () => {
     },
     {
       icon: <ShieldCheck size={48} className="text-[#B17C2D]" />,
-      title: 'Mais de 14 anos de experiência',
+      title: 'Desde 2011, atuamos com excelência e credibilidade no mercado',
       description: 'Confie em quem entende do assunto para garantir a conformidade do seu negócio.',
     },
     {
@@ -187,6 +188,11 @@ const Services = () => {
       description: 'Abrimos seu CNPJ do zero, cuidando de todo o processo burocrático para você.',
     },
     {
+      icon: <UserPlus size={40} className="text-[#1C4C9A]" />,
+      title: 'Formalização de MEI',
+      description: 'Cuidamos da criação completa do seu MEI, deixando tudo pronto para emitir notas fiscais e atuar legalmente.',
+    },
+    {
       icon: <FileDiff size={40} className="text-[#1C4C9A]" />,
       title: 'Alteração Contratual',
       description: 'Mudança de endereço, sócios, atividades (CNAEs) ou qualquer outra atualização necessária.',
@@ -209,7 +215,7 @@ const Services = () => {
         <h2 className="text-3xl md:text-4xl font-bold font-poppins text-white text-center mb-12">
           Soluções Completas para sua Empresa
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           {servicesList.map((service, index) => (
             <div
               key={index}
@@ -418,8 +424,8 @@ const Footer = () => {
               Simplificando a burocracia para você focar no seu crescimento.
             </p>
             <p className="text-gray-400 text-xs">
-              CNPJ: 00.000.000/0001-00 <br />
-              Endereço: Rua Fictícia, 123 - Sala 00, Brasil
+              CNPJ: 51.697.242/0001-17 <br />
+              Duque de Caxias - RJ
             </p>
           </div>
 
@@ -432,7 +438,7 @@ const Footer = () => {
               <li><a href="#services" className="text-gray-300 hover:text-[#D9B465] transition-colors">Serviços</a></li>
               <li><a href="#about" className="text-gray-300 hover:text-[#D9B465] transition-colors">Quem Somos</a></li>
               <li><a href="#contact" className="text-gray-300 hover:text-[#D9B465] transition-colors">Contato</a></li>
-              <li><a href="#contact" className="text-[#B17C2D] hover:text-[#D9B465] transition-colors">Painel</a></li>
+          
             </ul>
           </div>
 
@@ -444,11 +450,11 @@ const Footer = () => {
             <ul className="space-y-2 text-gray-300">
               <li className="flex items-center space-x-2">
                 <Phone size={18} />
-                <span>(00) 00000-0000</span>
+                <span>(21) 93300-6931</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail size={18} />
-                <span>contato@oriente.com.br</span>
+                <span>contato@orientelegalizacao.com.br</span>
               </li>
               <li className="flex items-center space-x-2">
                 <MapPin size={18} />
@@ -456,9 +462,9 @@ const Footer = () => {
               </li>
             </ul>
             <div className="flex space-x-5 mt-6">
-              <a href="#" aria-label="Facebook" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Facebook size={24} /></a>
-              <a href="#" aria-label="Instagram" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Instagram size={24} /></a>
-              <a href="#" aria-label="LinkedIn" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Linkedin size={24} /></a>
+              {/* <a href="#" aria-label="Facebook" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Facebook size={24} /></a> */}
+              <a href="https://www.instagram.com/oriente_legalizacao"  aria-label="Instagram" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Instagram size={24} /></a>
+              {/* <a href="#" aria-label="LinkedIn" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Linkedin size={24} /></a> */}
             </div>
           </div>
         </div>
