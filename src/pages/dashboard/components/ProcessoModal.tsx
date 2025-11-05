@@ -70,7 +70,9 @@ export default function ProcessoModal({
     if (!isOpen) return null;
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+        
         const { name, value } = e.target;
+        console.log("Name: ", name);
         if (name === "tipo_processo") {
             const selectedTipo = tiposProcesso.find(tipo => tipo.id === Number(value));
             setFormData(prev => ({ ...prev, tipo_processo: selectedTipo, tipos_alteracao: [] }));
@@ -220,6 +222,9 @@ export default function ProcessoModal({
         return false;
     };
 
+    console.log("Form data:", formData);
+    
+
     return (
         <div className="fixed inset-0 bg-black/50 bg-opacity-50 z-50 flex justify-center items-center p-4">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl transform transition-all max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
@@ -347,7 +352,7 @@ export default function ProcessoModal({
                         )}
                         <div className={formData.tipo_processo?.nome === 'Constituição' ? 'md:col-span-2' : ''}>
                             <label className="block text-sm font-medium text-gray-700">Nome da Empresa / Razão Social</label>
-                            <input type="text" name="empresa" value={formData.empresa?.nome} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                            <input type="text" name="empresa.nome" value={formData.empresa?.nome} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                         </div>
                     </div>
 
