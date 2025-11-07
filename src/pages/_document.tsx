@@ -1,25 +1,12 @@
 // pages/_document.tsx
-import { Html, Main, NextScript, Head } from "next/document";
-import type { Metadata } from 'next';
-import Logo from '@/images/OrienteRedondo.svg';
-
-// Metadados para SEO
-export const metadata: Metadata = {
-  title: 'Oriente – Legalização de Empresas | Segurança e Agilidade',
-  description:
-    'Especialistas em abertura, alteração, regularização e baixa de empresas em todo o Brasil. Processos 100% online com mais de 14 anos de experiência.',
-  keywords: 'abertura de empresa, legalização de empresas, CNPJ, alteração contratual, baixa de empresa',
-};
-
-const svg = encodeURIComponent(`
-  ${Logo}
-`);
+import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
-    <Html suppressHydrationWarning>
+    <Html lang="pt-BR" suppressHydrationWarning>
       <Head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <meta name="theme-color" content="#0D2A55" />
       </Head>
       <body>
         <Main />
