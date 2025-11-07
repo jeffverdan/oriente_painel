@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
 import { Inter } from "next/font/google";
 import HeadSeo from '@/componentes/HeadSeo/HeadSeo';
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <div className={inter.variable}>
         <HeadSeo titlePage='' description='' />
         <Component {...pageProps} />
+        <Analytics />
     </div>
   );
 }

@@ -18,15 +18,17 @@ import {
   Phone,
   Mail,
   MapPin,
-  Facebook,
   Instagram,
-  Linkedin,
   MessagesSquare, // Ícone para o WhatsApp FAB
   Send,
+  CheckCircle,
   UserPlus
 } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 
 // --- COMPONENTES REUTILIZÁVEIS ---
 
@@ -119,7 +121,7 @@ const HeroSection = () => {
           Mais de 14 anos de experiência e processos 100% online para sua tranquilidade e foco no que realmente importa: seu negócio.
         </p>
         <a
-          href="https://w.app/orientelegalizacao"
+          href="https://wa.me/5521933006931?text=Ol%C3%A1!%20Gostaria%20de%20obter%20mais%20informa%C3%A7%C3%B5es%20sobre%20seus%20servi%C3%A7os."
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-[#B17C2D] text-white font-bold font-poppins py-3 px-10 text-lg rounded-lg shadow-lg hover:bg-[#D9B465] hover:text-[#0D2A55] transition-all duration-300 transform hover:-translate-y-0.5"
@@ -249,59 +251,134 @@ const Services = () => {
 const Testimonials = () => {
   const testimonialsList = [
     {
-      name: 'João Silva',
-      title: 'CEO da TechInova',
+      name: "João Silva",
+      title: "Empresári no ramo de TI",
       quote:
-        'A Oriente Legalização foi fundamental para abrir minha startup. O processo foi rápido, 100% online e a equipe foi muito atenciosa. Recomendo!',
-      image: 'https://placehold.co/80x80/D9B465/0D2A55?text=JS',
+        "A Oriente Legalização de Empresas foi fundamental para abrir minha startup. O processo foi rápido, 100% online e a equipe foi muito atenciosa. Recomendo!",
+      image: "https://placehold.co/80x80/D9B465/0D2A55?text=JS",
     },
     {
-      name: 'Maria Oliveira',
-      title: 'Dona da Café & Arte',
+      name: "Maria Oliveira",
+      title: "Empresária no ramo Alimentício",
       quote:
-        'Eu estava com pendências na minha empresa e não sabia por onde começar. Eles resolveram tudo em tempo recorde. Profissionais de confiança!',
-      image: 'https://placehold.co/80x80/B17C2D/FFFFFF?text=MO',
+        "Eu estava com pendências na minha empresa e não sabia por onde começar. Eles resolveram tudo em tempo recorde. Profissionais de confiança!",
+      image: "https://placehold.co/80x80/B17C2D/FFFFFF?text=MO",
+    },
+    {
+      name: "Carlos Mendes",
+      title: "Empresário no ramo de Logística",
+      quote:
+        "Minha empresa estava com CNPJ suspenso e a Oriente cuidou de tudo com total transparência. Atendimento impecável!",
+      image: "https://placehold.co/80x80/0D2A55/FFFFFF?text=CM",
+    },
+    {
+      name: "Fernanda Rocha",
+      title: "Consultora de Marketing",
+      quote:
+        "Nunca pensei que abrir um CNPJ pudesse ser tão simples. Fiz tudo pelo celular e recebi minha documentação no mesmo dia!",
+      image: "https://placehold.co/80x80/D9B465/FFFFFF?text=FR",
+    },
+    {
+      name: "Lucas Pereira",
+      title: "Empresário no ramo de Construção Cívil",
+      quote:
+        "A equipe da Oriente me orientou em cada etapa da alteração contratual. Atendimento rápido e muito profissional.",
+      image: "https://placehold.co/80x80/B17C2D/FFFFFF?text=LP",
+    },
+    {
+      name: "Patrícia Gomes",
+      title: "Advogada",
+      quote:
+        "Excelente experiência! Precisei regularizar minha empresa e todo o processo foi feito de forma clara e segura.",
+      image: "https://placehold.co/80x80/0D2A55/FFFFFF?text=PG",
+    },
+    {
+      name: "Rodrigo Alves",
+      title: "Empresário no ramo de TI",
+      quote:
+        "Serviço de alta qualidade! Cumpriram todos os prazos e me mantiveram informado a cada atualização.",
+      image: "https://placehold.co/80x80/D9B465/0D2A55?text=RA",
+    },
+    {
+      name: "Juliana Costa",
+      title: "Empresária no ramo de estética",
+      quote:
+        "Com a ajuda da Oriente consegui finalmente colocar minha clínica em dia com todos os órgãos públicos. Sensacional!",
+      image: "https://placehold.co/80x80/B17C2D/FFFFFF?text=JC",
+    },
+    {
+      name: "André Souza",
+      title: "Contador Autônomo",
+      quote:
+        "Como contador, recomendo a Oriente a todos os meus clientes. São rápidos, seguros e conhecem bem a legislação.",
+      image: "https://placehold.co/80x80/0D2A55/FFFFFF?text=AS",
+    },
+    {
+      name: "Renata Martins",
+      title: "Empreendedora",
+      quote:
+        "Fiquei surpresa com o nível de suporte que recebi. Eles realmente se preocupam em resolver e não apenas vender.",
+      image: "https://placehold.co/80x80/D9B465/0D2A55?text=RM",
     },
   ];
 
   return (
-    <section id="about" className="py-20 bg-[#F5F5F5]">
+    <section id="testimonials" className="py-20 bg-[#F5F5F5]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
         <h2 className="text-3xl md:text-4xl font-bold font-poppins text-[#0D2A55] text-center mb-12">
           O que nossos clientes dizem
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <Swiper
+          modules={[Pagination, Autoplay]}
+          pagination={{ clickable: true }}
+          autoplay={{ delay: 4500 }}
+          spaceBetween={30}
+          slidesPerView={1}
+          breakpoints={{ 768: { slidesPerView: 2 } }}
+          style={{ paddingBottom: "40px" }} // 🔹 Espaço extra para as bolinhas
+        >
           {testimonialsList.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-white p-8 rounded-lg shadow-lg relative"
-            >
-              <div className="flex text-[#D9B465] mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={20} fill="currentColor" />
-                ))}
-              </div>
-              <p className="text-gray-700 font-inter italic text-lg mb-6">
-                {`"${testimonial.quote}"`}
-              </p>
-              <div className="flex items-center">
-                <Image
-                  width={16}
-                  height={16}
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-16 h-16 rounded-full mr-4 border-2 border-[#D9B465]"
-                />
+            <SwiperSlide key={index}>
+              <div
+                className="bg-white p-8 rounded-lg shadow-lg flex flex-col justify-between"
+                style={{
+                  minHeight: "360px",
+                }}
+              >
                 <div>
-                  <h4 className="text-lg font-bold font-poppins text-[#0D2A55]">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-gray-500 font-inter">{testimonial.title}</p>
+                  <div className="flex text-[#D9B465] mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={20} fill="currentColor" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 font-inter italic text-lg mb-6 leading-relaxed">
+                    {`"${testimonial.quote}"`}
+                  </p>
+                </div>
+
+                <div className="flex items-center mt-auto">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    width={64}
+                    height={64}
+                    unoptimized
+                    className="w-16 h-16 rounded-full mr-4 border-2 border-[#D9B465] object-cover"
+                  />
+                  <div>
+                    <h4 className="text-lg font-bold font-poppins text-[#0D2A55]">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-gray-500 font-inter">
+                      {testimonial.title}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </SwiperSlide>
           ))}
-        </div>
+        </Swiper>
       </div>
     </section>
   );
@@ -312,50 +389,78 @@ const Testimonials = () => {
  * Seção com formulário de contato e CTA principal.
  */
 const ContactForm = () => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [form, setForm] = useState({ nome: '', email: '', telefone: '', mensagem: '' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Lógica de envio do formulário (ex: API, Netlify Forms)
-    alert('Mensagem enviada com sucesso! (Simulação)');
+    setLoading(true);
+    console.log("OAUTH_CLIENT_ID: ", process.env.NEXT_PUBLIC_EMAIL_USER);
+
+
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: form.nome,
+          email: form.email,
+          mensagem: `${form.mensagem}\nTelefone: ${form.telefone}`,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Erro ao enviar e-mail.');
+
+      setIsModalOpen(true);
+      setForm({ nome: '', email: '', telefone: '', mensagem: '' });
+    } catch (err) {
+      alert('Erro ao enviar mensagem. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section id="contact" className="py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Coluna de Texto e CTA */}
+          {/* Coluna de texto */}
           <div>
             <h2 className="text-3xl md:text-4xl font-bold font-poppins text-[#0D2A55] mb-4">
               Dê o primeiro passo para o sucesso
             </h2>
             <p className="text-lg text-gray-700 font-inter mb-8">
-              Preencha o formulário e nossa equipe de especialistas entrará em contato em até 24h para entender sua necessidade.
+              Preencha o formulário e nossa equipe entrará em contato em até 24h para entender sua necessidade.
             </p>
             <p className="text-lg text-gray-700 font-inter mb-8">
               Prefere agilidade? <br />
-              <strong>Clique no botão abaixo</strong> e fale conosco agora mesmo pelo WhatsApp.
+              <strong>Clique abaixo</strong> e fale conosco agora pelo WhatsApp.
             </p>
             <a
-              href="https://w.app/orientelegalizacao"
+              href="https://wa.me/5521933006931?text=Ol%C3%A1!%20Gostaria%20de%20obter%20mais%20informa%C3%A7%C3%B5es%20sobre%20seus%20servi%C3%A7os."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-[#B17C2D] text-white font-bold font-poppins py-3 px-10 text-lg rounded-lg shadow-lg hover:bg-[#D9B465] hover:text-[#0D2A55] transition-all duration-300 transform hover:-translate-y-0.5"
             >
-              Falar agora via WhatsApp
+              Falar via WhatsApp
             </a>
           </div>
 
-          {/* Coluna do Formulário */}
+          {/* Coluna do formulário */}
           <form
             onSubmit={handleSubmit}
             className="bg-[#F5F5F5] p-8 rounded-lg shadow-md font-inter"
           >
             <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-[#0D2A55] mb-1">
+              <label htmlFor="nome" className="block text-sm font-medium text-[#0D2A55] mb-1">
                 Nome Completo
               </label>
               <input
                 type="text"
-                id="name"
+                id="nome"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#1C4C9A] focus:border-[#1C4C9A]"
               />
@@ -367,41 +472,69 @@ const ContactForm = () => {
               <input
                 type="email"
                 id="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#1C4C9A] focus:border-[#1C4C9A]"
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="phone" className="block text-sm font-medium text-[#0D2A55] mb-1">
+              <label htmlFor="telefone" className="block text-sm font-medium text-[#0D2A55] mb-1">
                 Telefone / WhatsApp
               </label>
               <input
                 type="tel"
-                id="phone"
+                id="telefone"
+                value={form.telefone}
+                onChange={(e) => setForm({ ...form, telefone: e.target.value })}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#1C4C9A] focus:border-[#1C4C9A]"
               />
             </div>
             <div className="mb-6">
-              <label htmlFor="message" className="block text-sm font-medium text-[#0D2A55] mb-1">
+              <label htmlFor="mensagem" className="block text-sm font-medium text-[#0D2A55] mb-1">
                 Mensagem (Descreva sua necessidade)
               </label>
               <textarea
-                id="message"
+                id="mensagem"
                 rows={4}
+                value={form.mensagem}
+                onChange={(e) => setForm({ ...form, mensagem: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#1C4C9A] focus:border-[#1C4C9A]"
               ></textarea>
             </div>
             <button
               type="submit"
-              className="w-full bg-[#0D2A55] text-white font-bold font-poppins py-3 px-6 rounded-lg text-lg hover:bg-[#1C4C9A] transition-colors duration-300 flex items-center justify-center space-x-2"
+              disabled={loading}
+              className="w-full bg-[#0D2A55] text-white font-bold font-poppins py-3 px-6 rounded-lg text-lg hover:bg-[#1C4C9A] transition-colors duration-300 flex items-center justify-center space-x-2 disabled:opacity-70"
             >
               <Send size={20} />
-              <span>Enviar Mensagem</span>
+              <span>{loading ? 'Enviando...' : 'Enviar Mensagem'}</span>
             </button>
           </form>
         </div>
       </div>
+
+      {/* 🌟 MODAL DE CONFIRMAÇÃO */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center animate-fade-in">
+            <CheckCircle size={64} className="text-green-500 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-[#0D2A55] mb-2">
+              Mensagem Enviada!
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Recebemos sua mensagem com sucesso. Nossa equipe entrará em contato em breve!
+            </p>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="bg-[#0D2A55] text-white font-semibold px-6 py-2 rounded-lg hover:bg-[#1C4C9A] transition"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
@@ -418,7 +551,7 @@ const Footer = () => {
           {/* Coluna 1: Sobre */}
           <div>
             <h3 className="text-2xl font-bold font-poppins mb-4">
-              Oriente Legalização
+              Oriente Legalização de Empresas
             </h3>
             <p className="text-gray-300 text-sm mb-4">
               Simplificando a burocracia para você focar no seu crescimento.
@@ -438,7 +571,7 @@ const Footer = () => {
               <li><a href="#services" className="text-gray-300 hover:text-[#D9B465] transition-colors">Serviços</a></li>
               <li><a href="#about" className="text-gray-300 hover:text-[#D9B465] transition-colors">Quem Somos</a></li>
               <li><a href="#contact" className="text-gray-300 hover:text-[#D9B465] transition-colors">Contato</a></li>
-          
+
             </ul>
           </div>
 
@@ -461,9 +594,10 @@ const Footer = () => {
                 <span>Atendimento 100% Digital</span>
               </li>
             </ul>
-            <div className="flex space-x-5 mt-6">
+            <div className="flex space-x-2 mt-6">
               {/* <a href="#" aria-label="Facebook" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Facebook size={24} /></a> */}
-              <a href="https://www.instagram.com/oriente_legalizacao"  aria-label="Instagram" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Instagram size={24} /></a>
+              <a href="https://www.instagram.com/oriente_legalizacao" aria-label="Instagram" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Instagram size={24} /></a>
+              <span>@oriente_legalizacao</span>
               {/* <a href="#" aria-label="LinkedIn" className="text-gray-300 hover:text-[#D9B465] transition-colors"><Linkedin size={24} /></a> */}
             </div>
           </div>
@@ -471,7 +605,7 @@ const Footer = () => {
 
         {/* Linha de Copyright */}
         <div className="border-t border-[#1C4C9A] mt-10 pt-6 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} Oriente Legalização. Todos os direitos reservados.
+          © {new Date().getFullYear()} Oriente Legalização de Empresas. Todos os direitos reservados.
         </div>
       </div>
     </footer>
@@ -485,7 +619,7 @@ const Footer = () => {
 const WhatsAppButton = () => {
   return (
     <a
-      href="https://w.app/orientelegalizacao"
+      href="https://wa.me/5521933006931?text=Ol%C3%A1!%20Gostaria%20de%20obter%20mais%20informa%C3%A7%C3%B5es%20sobre%20seus%20servi%C3%A7os."
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar com um especialista no WhatsApp"
